@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import Cookies from 'js-cookie';
+import { toast } from 'sonner';
 
 type CartItem = {
   id: number;
@@ -26,41 +26,21 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
 
-  // Load cart from localStorage or cookies on initial load
+  // Load cart from localStorage on initial load
   useEffect(() => {
-    const loadCart = () => {
-      const savedCart = localStorage.getItem('cart');
-      const cookieCart = Cookies.get('cart');
-
-      if (savedCart) {
-        try {
-          setCart(JSON.parse(savedCart));
-        } catch (error) {
-          console.error('Error parsing cart data from localStorage:', error);
-        }
-      } else if (cookieCart) {
-        try {
-          setCart(JSON.parse(cookieCart));
-        } catch (error) {
-          console.error('Error parsing cart data from cookie:', error);
-        }
+    const savedCart = localStorage.getItem('cart');
+    if (savedCart) {
+      try {
+        setCart(JSON.parse(savedCart));
+      } catch (error) {
+        console.error('Error parsing cart data from localStorage:', error);
       }
-    };
-
-    loadCart();
+    }
   }, []);
 
-  // Save cart to localStorage and cookies whenever the cart state changes
+  // Save cart to localStorage whenever the cart state changes
   useEffect(() => {
-    if (cart.length > 0) {
-      // Only save if cart is not empty
-      const saveCart = () => {
-        localStorage.setItem('cart', JSON.stringify(cart));
-        Cookies.set('cart', JSON.stringify(cart), { expires: 7 }); // Expires in 7 days
-      };
-
-      saveCart();
-    }
+    localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
 
   // Add item to cart
@@ -68,26 +48,33 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     setCart((prevCart) => {
       const existingItem = prevCart.find((cartItem) => cartItem.id === item.id);
       if (existingItem) {
-        return prevCart.map((cartItem) =>
+        const updatedCart = prevCart.map((cartItem) =>
           cartItem.id === item.id
             ? { ...cartItem, quantity: cartItem.quantity + 1 }
             : cartItem
         );
+        toast.success(`Added another ${item.name} to cart`);
+        return updatedCart;
       }
+      toast.success(`Added ${item.name} to cart`);
       return [...prevCart, { ...item, quantity: 1 }];
     });
   };
 
   // Remove item from cart
   const removeFromCart = (id: number) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+    setCart((prevCart) => {
+      const updatedCart = prevCart.filter((item) => item.id !== id);
+      toast.success('Item removed from cart');
+      return updatedCart;
+    });
   };
 
-  // Clear the entire cart, both from state and storage
+  // Clear the entire cart
   const clearCart = () => {
     setCart([]);
     localStorage.removeItem('cart');
-    Cookies.remove('cart');
+    toast.success('Cart cleared');
   };
 
   return (

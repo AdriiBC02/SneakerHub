@@ -49,7 +49,7 @@ export default function SneakerGrid({ limit, featuredOnly = false }: SneakerGrid
         setSneakers(data || []);
       } catch (error) {
         console.error('Error fetching sneakers:', error);
-        toast.error('Failed to load sneakers');
+        toast.error("Failed to load sneakers");
       } finally {
         setLoading(false);
       }
@@ -60,7 +60,7 @@ export default function SneakerGrid({ limit, featuredOnly = false }: SneakerGrid
 
   const handleAddToCart = (sneaker: Sneaker) => {
     addToCart(sneaker);
-    toast.success(`Added ${sneaker.name} to cart`);
+    toast.success(`${sneaker.name} has been added to your cart`);
   };
 
   if (loading) {
@@ -86,7 +86,7 @@ export default function SneakerGrid({ limit, featuredOnly = false }: SneakerGrid
             <div className="p-4">
               <h3 className="text-xl font-semibold">{sneaker.name}</h3>
               <p className="text-gray-600">{sneaker.brand}</p>
-              <p className="text-lg font-bold mt-2">${sneaker.price}</p>
+              <p className="text-lg font-bold mt-2">${sneaker.price.toFixed(2)}</p>
               {sneaker.featured && (
                 <span className="bg-yellow-400 text-yellow-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">Featured</span>
               )}

@@ -6,6 +6,8 @@ import Footer from '@/components/Footer';
 import { CartProvider } from '@/lib/CartContext';
 import { AuthProvider } from '@/lib/AuthProvider';
 import { Toaster } from '@/components/ui/toaster';
+import { ThemeProvider } from '@/components/ThemeProvider';
+import CookieBanner from '@/components/CookieBanner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,18 +22,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
-        <AuthProvider>
-          <CartProvider>
-            <div className="flex flex-col min-h-screen">
-              <Header />
-              <main className="flex-grow">{children}</main>
-              <Footer />
-            </div>
-          </CartProvider>
-        </AuthProvider>
-        <Toaster />
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <AuthProvider>
+            <CartProvider>
+              <div className="flex flex-col min-h-screen">
+                <Header />
+                <main className="flex-grow">{children}</main>
+                <Footer />
+              </div>
+              <CookieBanner />
+            </CartProvider>
+          </AuthProvider>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

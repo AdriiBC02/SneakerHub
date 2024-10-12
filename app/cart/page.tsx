@@ -4,11 +4,17 @@ import { useCart } from '@/lib/CartContext';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function Cart() {
   const { cart, removeFromCart } = useCart();
+  const router = useRouter();
 
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  const handleCheckout = () => {
+    router.push('/checkout');
+  };
 
   if (cart.length === 0) {
     return (
@@ -43,7 +49,7 @@ export default function Cart() {
       ))}
       <div className="mt-8">
         <p className="text-xl font-bold">Total: ${total}</p>
-        <Button className="mt-4">Proceed to Checkout</Button>
+        <Button className="mt-4" onClick={handleCheckout}>Proceed to Checkout</Button>
       </div>
     </div>
   );
