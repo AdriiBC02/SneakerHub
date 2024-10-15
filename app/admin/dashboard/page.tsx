@@ -83,14 +83,27 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleLogout = async () => {
+const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      // Clear any local storage items
+      localStorage.removeItem('supabase.auth.token');
+      
+      // Clear any cookies (if you're using them)
+      document.cookie.split(";").forEach((c) => {
+        document.cookie = c
+          .replace(/^ +/, "")
+          .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      });
+
+      // Use the router to redirect
       router.push('/');
       toast.success('Logged out successfully');
     } catch (error) {
       console.error('Error signing out:', error);
-      toast.error('Failed to sign out');
+      toast.error('Failed to sign out. Please try again.');
     }
   };
 
