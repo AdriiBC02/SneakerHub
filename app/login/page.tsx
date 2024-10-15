@@ -7,9 +7,8 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { createClientSideSupabaseClient } from '@/lib/supabase';
 import { useAuth } from '@/lib/AuthProvider';
-import Link from 'next/link';
 
-export default function CustomerLogin() {
+export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
@@ -48,10 +47,24 @@ export default function CustomerLogin() {
       if (error) throw error;
 
       if (data.user) {
-        toast.success(
-          isSignUp ? 'Signed up successfully' : 'Logged in successfully'
-        );
-        router.push('/dashboard');
+        // Check if the user is an admin
+        const { data: adminData, error: adminError } = await supabase
+          .from('admin_users')
+          .select('id')
+          .eq('id', data.user.id)
+          .single();
+
+        if (adminError && adminError.code !== 'PGRST116') {
+          throw adminError;
+        }
+
+        toast.success(isSignUp ? 'Signed up successfully' : 'Logged in successfully');
+        
+        if (adminData) {
+          router.push('/admin/dashboard');
+        } else {
+          router.push('/dashboard');
+        }
       }
     } catch (error) {
       console.error('Error during authentication:', error);
@@ -67,7 +80,7 @@ export default function CustomerLogin() {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="p-8 bg-white rounded shadow-md w-96">
         <h1 className="text-2xl font-bold mb-6 text-center">
-          {isSignUp ? 'Customer Sign Up' : 'Customer Login'}
+          {isSignUp ? 'Sign Up' : 'Login'}
         </h1>
         <form onSubmit={handleAuth}>
           <div className="mb-4">
@@ -98,14 +111,6 @@ export default function CustomerLogin() {
               ? 'Already have an account? Log in'
               : "Don't have an account? Sign up"}
           </Button>
-        </div>
-        <div className="mt-4 text-center">
-          <Link
-            href="/admin/login"
-            className="text-sm text-blue-600 hover:underline"
-          >
-            Admin Login
-          </Link>
         </div>
       </div>
     </div>

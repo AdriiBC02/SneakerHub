@@ -11,9 +11,9 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getSession();
 
   // Protect admin routes
-  if (req.nextUrl.pathname.startsWith('/admin') && req.nextUrl.pathname !== '/admin/login') {
+  if (req.nextUrl.pathname.startsWith('/admin')) {
     if (!session) {
-      return NextResponse.redirect(new URL('/admin/login', req.url));
+      return NextResponse.redirect(new URL('/login', req.url));
     }
 
     // Check if the user is an admin
@@ -24,8 +24,8 @@ export async function middleware(req: NextRequest) {
       .single();
 
     if (adminError || !adminData) {
-      // Don't sign out here, just redirect
-      return NextResponse.redirect(new URL('/admin/login', req.url));
+      // Redirect to the main dashboard if not an admin
+      return NextResponse.redirect(new URL('/dashboard', req.url));
     }
   }
 
