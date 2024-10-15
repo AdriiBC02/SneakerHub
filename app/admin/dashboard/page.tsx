@@ -83,7 +83,7 @@ export default function AdminDashboard() {
     }
   };
 
-const handleLogout = async () => {
+  const handleLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
