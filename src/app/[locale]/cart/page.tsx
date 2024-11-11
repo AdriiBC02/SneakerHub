@@ -13,7 +13,7 @@ export default function Cart() {
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleCheckout = () => {
-    router.push('/checkout');
+    router.push('/${currentLang}/checkout');
   };
 
   if (cart.length === 0) {
