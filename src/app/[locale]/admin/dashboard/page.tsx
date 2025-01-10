@@ -48,7 +48,15 @@ export default function AdminDashboard() {
   const { user, isAdmin } = useAuth();
   const supabase = createClientSideSupabaseClient();
 
+  useEffect(() => {
+    loadSnkrs();
+  }, [user, isAdmin]);
 
+  const loadSnkrs = async () => {
+      setIsLoading(false);
+      fetchSneakers();
+      fetchOrders();
+  };
 
   const fetchSneakers = async () => {
     const { data, error } = await supabase.from('sneakers').select('*');
