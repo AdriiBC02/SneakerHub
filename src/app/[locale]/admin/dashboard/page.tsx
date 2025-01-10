@@ -48,19 +48,7 @@ export default function AdminDashboard() {
   const { user, isAdmin } = useAuth();
   const supabase = createClientSideSupabaseClient();
 
-  useEffect(() => {
-    checkAuth();
-  }, [user, isAdmin]);
 
-  const checkAuth = async () => {
-    if (!isAdmin) {
-      router.push('/login');
-    } else {
-      setIsLoading(false);
-      fetchSneakers();
-      fetchOrders();
-    }
-  };
 
   const fetchSneakers = async () => {
     const { data, error } = await supabase.from('sneakers').select('*');
