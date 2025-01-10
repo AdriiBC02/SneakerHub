@@ -49,13 +49,17 @@ export default function AdminDashboard() {
   const supabase = createClientSideSupabaseClient();
 
   useEffect(() => {
-    loadSnkrs();
+    checkAuth();
   }, [user, isAdmin]);
 
-  const loadSnkrs = async () => {
+  const checkAuth = async () => {
+    if (!user || !isAdmin) {
+      router.push('/login');
+    } else {
       setIsLoading(false);
       fetchSneakers();
       fetchOrders();
+    }
   };
 
   const fetchSneakers = async () => {
