@@ -53,7 +53,7 @@ export default function AdminDashboard() {
   }, [user, isAdmin]);
 
   const checkAuth = async () => {
-    if (!user || !isAdmin) {
+    if (!isAdmin) {
       router.push('/login');
     } else {
       setIsLoading(false);
